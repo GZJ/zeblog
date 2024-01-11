@@ -1,0 +1,58 @@
+#+TITLE:     Zeblog
+#+AUTHOR:    gzj
+#+EMAIL:     gzj00@outlook.com
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+#+OPTIONS: ^:nil
+
+zeblog is a minimalist blog site generator built on emacs org mode.
+
+* Dependencies
+
+Make sure you have the following dependencies installed before using zeblog.
+
+- ox-rss
+- ImageMagick
+
+* Usage
+
+Initialize the blog with the following settings:
+#+begin_src
+    (require 'zeblog)
+    (zeblog-init ./blog)
+
+    Enter author: [author name]
+    Enter email: [email address]
+    Enter publish url: [publish url]
+    Enter publish rss title: [rss title]
+#+end_src
+
+The directory structure of zeblog:
+- *index.org*: post management page.
+- *index.html.tmpl*: template file for generating html.
+- *posts/*: directory containing individual posts.
+- *publish_html/*: directory where published HTML files are stored.
+
+Write and publish posts:
+1. Create your initial post with the "I" key.
+2. Use "jk" or "np" keys to navigate and select a post to edit by pressing "Enter".
+3. After editing, mark the post for publication with the "m" key.
+4. Finish the process by pressing "P" to publish the designated post.
+
+* Hotkey
+
+- i: Create a new post after the current post.
+- I: Create a new post before the current post.
+- c: Create and edit a new post after the current post.
+- C: Create and edit a new post before the current post.
+- d: Delete current post.
+- r: Rename current post.
+- <return>: Open current post in another window.
+- S-<return>: Open current post.
+- n, j: Move to next post.
+- p, k: Move to previous post.
+- M-<up>, M-<down>, K, J: Move current blog post up or down in the index.
+- m: Mark current post.
+- M: Unmark current post.
+- P: Publish all posts.
+- b: Browse current post.
