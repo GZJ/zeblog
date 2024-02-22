@@ -697,33 +697,12 @@
 	       :email zeblog-email
 	       :setupfile (eval zeblog-post-setupfile)
 	       )
-	 (list "zeblog-rss"
-	       :base-directory (eval zeblog-posts-path)
-	       :base-extension zeblog-post-file-suffix
-	       :recursive nil
-	       :include zeblog-publish-include-files
-	       :publishing-function 'zeblog-org-rss-publish-to-rss
-	       :publishing-directory (eval zeblog-publish-path)
-	       :rss-extension "xml"
-	       :autor zeblog-author
-	       :email zeblog-email
-	       :html-link-home zeblog-publish-url
-	       :html-link-use-abs-url t
-	       :html-link-org-files-as-html t
-	       :auto-sitemap t
-	       :sitemap-filename "rss.org"
-	       :sitemap-title zeblog-publish-rss-title
-	       :sitemap-style 'list
-	       :sitemap-sort-files 'anti-chronologically
-	       :sitemap-function 'zeblog-format-rss-feed
-	       :sitemap-format-entry 'zeblog-format-rss-feed-entry
-	       )
 	 )
 	)
   (let ((org-publish-use-timestamps-flag nil)
 	(org-publish-use-timestamps nil))
     (funcall-interactively 'org-publish "zeblog-posts")
-    (funcall-interactively 'org-publish "zeblog-rss")
+    (zeblog-generate-rss)
     )
   (setq zeblog-published-files zeblog-publish-include-files)
   )
@@ -753,32 +732,37 @@
   )
 
 ;;;;; generate rss.xml
-(defun zeblog-org-rss-publish-to-rss (plist filename pub-dir)
-  (if (equal "rss.org" (file-name-nondirectory filename))
-      (org-rss-publish-to-rss plist filename pub-dir)))
+(defun zeblog-generate-rss()
+  (interactive)
+  (let (
+	(default-directory (eval zeblog-publish-path))
+	(posts (zeblog-index-marked-posts))
+	xml
+	tagRss
+	tagChannel)
+    (setq xml (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		      (progn
+			(setq tagRss '(rss))
+			(setq tagChannel '(channel))
+			(mapcar (lambda (post)
+				  (let  ((tagTitle post)
+					 (tagLink (format "https://%s/%s"  zeblog-publish-url (concat zeblog-posts-dir "/" post ".html")))
+					 (tagDescription (file-to-string (zeblog-post-file-path post))))
+				    (add-to-list 'tagChannel  `(item (title ,tagTitle)(link ,tagLink)(description ,tagDescription))  t)
+				    )
+				  )
+				posts)
+			(add-to-list 'tagRss tagChannel t)
+			(xmlgen tagRss)
+			)
+		      )
+	  )
+    (with-temp-file "rss.xml"
+      (insert xml)
+      )
+    )
+  )
 
-(defun zeblog-format-rss-feed (title list)
-  (concat "#+TITLE: " title "\n"
-	  "#+RSS_IMAGE_URL: "  zeblog-publish-url "/icon.png\n\n"
-          (org-list-to-subtree list 1 '(:icount "" :istart ""))))
-
-(defun zeblog-format-rss-feed-entry (entry style project)
-  (cond ((not (directory-name-p entry))
-         (let* ((file (org-publish--expand-file-name entry project))
-                (title (org-publish-find-title entry project))
-                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-                (link (concat (file-name-sans-extension entry) ".html"))
-		)
-	   (with-temp-buffer
-	     (org-mode)
-	     (insert (format "* %s\n" title))
-	     (org-set-property "RSS_PERMALINK" link)
-	     (org-set-property "PUBDATE" date)
-	     (insert-file-contents file)
-	     (buffer-string))))
-	((eq style 'tree)
-	 (file-name-nondirectory (directory-file-name entry)))
-	(t entry)))
 
 ;;;;; generate index.html
 (defun zeblog-generate-html-index()
