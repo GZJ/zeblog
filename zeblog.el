@@ -27,7 +27,7 @@
 ;;;; ------------------ require ------------------------------
 (require 'org)
 (require 'org-id)
-(require 'ox-rss)
+(require 'xmlgen)
 (require 'ox-publish)
 
 ;;;; ------------------ customize ------------------------------
