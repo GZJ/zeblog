@@ -12,6 +12,7 @@ zeblog is a minimalist blog site generator built on emacs org mode.
 Make sure you have the following dependencies installed before using zeblog.
 
 - ox-rss
+- xmlgen
 - ImageMagick
 
 * Usage
