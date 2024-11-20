@@ -746,7 +746,7 @@
 			(setq tagChannel '(channel))
 			(mapcar (lambda (post)
 				  (let  ((tagTitle post)
-					 (tagLink (format "%s/%s"  zeblog-publish-url (concat zeblog-posts-dir "/" post ".html")))
+					 (tagLink (format "%s/%s"  zeblog-publish-url (concat post zeblog-publish-file-suffix)))
 					 (tagDescription (file-to-string (zeblog-post-file-path post))))
 				    (add-to-list 'tagChannel  `(item (title ,tagTitle)(link ,tagLink)(description ,tagDescription))  t)
 				    )
