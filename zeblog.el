@@ -467,10 +467,10 @@
       (concat zeblog-buffer-prefix zeblog-index-file)
     (let ((posts '()))
       (org-element-map (org-element-parse-buffer) 'bold
-	(lambda (bold)
-    	  (add-to-list 'posts  (substring-no-properties (car  (org-element-contents bold))) t)
-	  )
-	)
+		       (lambda (bold)
+    			 (add-to-list 'posts  (substring-no-properties (car  (org-element-contents bold))) t)
+			 )
+		       )
       posts)
     )
   )
@@ -481,10 +481,10 @@
       (concat zeblog-buffer-prefix zeblog-index-file)
     (let ((posts '()))
       (org-element-map (org-element-parse-buffer) 'bold
-	(lambda (bold)
-    	  (add-to-list 'posts  (concat (substring-no-properties (car  (org-element-contents bold))) ".org") t)
-	  )
-	)
+		       (lambda (bold)
+    			 (add-to-list 'posts  (concat (substring-no-properties (car  (org-element-contents bold))) ".org") t)
+			 )
+		       )
       posts)
     )
   )
@@ -742,7 +742,7 @@
 	tagChannel)
     (setq xml (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		      (progn
-			(setq tagRss '(rss))
+			(setq tagRss '(rss :version "2.0"))
 			(setq tagChannel '(channel))
 			(mapcar (lambda (post)
 				  (let  ((tagTitle post)
