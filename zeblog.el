@@ -749,7 +749,7 @@
 				  (let  ((tagTitle post)
 					 (tagLink (format "%s/%s"  zeblog-publish-url (concat post zeblog-publish-file-suffix)))
 					 (tagDescription))
-				    (setq post-content (zeblog-org-file-to-ascii (zeblog-post-file-path post)))
+				    (setq post-content (zeblog-org-file-to-html-body (zeblog-post-file-path post)))
 				    (setq tagDescription (encode-coding-string post-content 'utf-8))
 				    (add-to-list 'tagChannel  `(item (title ,tagTitle)(link ,tagLink)(description ,tagDescription))  t)
 				    )
@@ -766,28 +766,18 @@
     )
   )
 
-(defun zeblog-org-file-to-ascii (file-path)
-  (interactive "fSelect Org File: ")
-
+(defun zeblog-org-file-to-html-body (file-path)
   (unless (file-exists-p file-path)
     (error "File does not exist: %s" file-path))
-
-  (with-temp-buffer
-    (insert-file-contents file-path)
-    (org-mode)
-
-    (let* ((org-ascii-charset 'utf-8)
-           (org-export-with-toc nil)
-           (org-export-with-section-numbers nil)
-           (org-export-show-temporary-export-buffer nil)
-           (inhibit-message t)
-           (export-buffer (org-ascii-export-as-ascii nil nil nil t)))
-
-      (with-current-buffer export-buffer
-        (prog1
-            (buffer-string)
-          (kill-buffer))))))
-
+  (require 'ox-html)
+  (let ((org-export-with-toc nil)
+        (org-export-with-section-numbers nil)
+        (org-export-body-only t)
+	)
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (org-mode)
+      (org-export-as 'html nil nil t))))
 
 ;;;;; generate index.html
 (defun zeblog-generate-html-index()
