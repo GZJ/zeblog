@@ -467,10 +467,10 @@
       (concat zeblog-buffer-prefix zeblog-index-file)
     (let ((posts '()))
       (org-element-map (org-element-parse-buffer) 'bold
-		       (lambda (bold)
-    			 (add-to-list 'posts  (substring-no-properties (car  (org-element-contents bold))) t)
-			 )
-		       )
+	(lambda (bold)
+    	  (add-to-list 'posts  (substring-no-properties (car  (org-element-contents bold))) t)
+	  )
+	)
       posts)
     )
   )
@@ -481,10 +481,10 @@
       (concat zeblog-buffer-prefix zeblog-index-file)
     (let ((posts '()))
       (org-element-map (org-element-parse-buffer) 'bold
-		       (lambda (bold)
-    			 (add-to-list 'posts  (concat (substring-no-properties (car  (org-element-contents bold))) ".org") t)
-			 )
-		       )
+	(lambda (bold)
+    	  (add-to-list 'posts  (concat (substring-no-properties (car  (org-element-contents bold))) ".org") t)
+	  )
+	)
       posts)
     )
   )
@@ -740,6 +740,7 @@
 	xml
 	tagRss
 	tagChannel)
+    
     (setq xml (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		      (progn
 			(setq tagRss '(rss :version "2.0"))
@@ -747,7 +748,9 @@
 			(mapcar (lambda (post)
 				  (let  ((tagTitle post)
 					 (tagLink (format "%s/%s"  zeblog-publish-url (concat post zeblog-publish-file-suffix)))
-					 (tagDescription (file-to-string (zeblog-post-file-path post))))
+					 (tagDescription))
+				    (setq post-content (zeblog-org-file-to-ascii (zeblog-post-file-path post)))
+				    (setq tagDescription (encode-coding-string post-content 'utf-8))
 				    (add-to-list 'tagChannel  `(item (title ,tagTitle)(link ,tagLink)(description ,tagDescription))  t)
 				    )
 				  )
@@ -762,6 +765,28 @@
       )
     )
   )
+
+(defun zeblog-org-file-to-ascii (file-path)
+  (interactive "fSelect Org File: ")
+
+  (unless (file-exists-p file-path)
+    (error "File does not exist: %s" file-path))
+
+  (with-temp-buffer
+    (insert-file-contents file-path)
+    (org-mode)
+
+    (let* ((org-ascii-charset 'utf-8)
+           (org-export-with-toc nil)
+           (org-export-with-section-numbers nil)
+           (org-export-show-temporary-export-buffer nil)
+           (inhibit-message t)
+           (export-buffer (org-ascii-export-as-ascii nil nil nil t)))
+
+      (with-current-buffer export-buffer
+        (prog1
+            (buffer-string)
+          (kill-buffer))))))
 
 
 ;;;;; generate index.html
