@@ -681,7 +681,7 @@
   (make-directory (eval zeblog-publish-path) t)
   (zeblog-generate-html-index)
   (setq zeblog-publish-include-files (zeblog-index-marked-posts-file))
-  (call-interactively 'zeblog-publish-clean)
+  (zeblog-publish-clean)
   (setq org-publish-project-alist
 	(list
 	 (list "zeblog-posts"
@@ -703,7 +703,7 @@
 	)
   (let ((org-publish-use-timestamps-flag nil)
 	(org-publish-use-timestamps nil))
-    (funcall-interactively 'org-publish "zeblog-posts")
+    (org-publish "zeblog-posts")
     (zeblog-generate-rss)
     )
   (setq zeblog-published-files zeblog-publish-include-files)
