@@ -72,6 +72,10 @@ Write and publish posts:
 The repository includes a =test/= directory with sample posts. Try without any other config:
 
 #+begin_src sh
+# install dependency first (one-time)
+emacs -q --eval '(progn (require (quote package)) (add-to-list (quote package-archives) (quote ("melpa" . "https://melpa.org/packages/"))) (package-initialize) (package-install (quote xmlgen)))'
+
+# then test
 emacs -q --eval '(progn (add-to-list (quote load-path) default-directory) (require (quote zeblog)) (zeblog-init "./test"))'
 #+end_src
 
