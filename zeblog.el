@@ -6,7 +6,7 @@
 ;; URL: https://github.com/GZJ/zeblog
 ;; Keywords: blog
 ;; Version: 1.0.0
-;; Package-Requires: ((emacs "28.1") (org "9.5") (xmlgen "0.4"))
+;; Package-Requires: ((emacs "30.2") (org "9.5") (xmlgen "0.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
