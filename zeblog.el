@@ -3,8 +3,10 @@
 ;;; Copyright (C) 2023 GZJ
 
 ;; Author: GZJ <gzj00@outlook.com>
+;; URL: https://github.com/GZJ/zeblog
 ;; Keywords: blog
 ;; Version: 1.0.0
+;; Package-Requires: ((emacs "28.1") (org "9.5") (xmlgen "0.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -26,9 +28,9 @@
 ;;; Code:
 ;;;; ------------------ require ------------------------------
 (require 'org)
-(require 'org-id)
 (require 'xmlgen)
 (require 'ox-publish)
+(require 'cl-lib)
 
 ;;;; ------------------ customize ------------------------------
 (defgroup zeblog nil
@@ -744,7 +746,7 @@
     (setq xml (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		      (progn
 			(setq tagRss '(rss :version "2.0"))
-			(setq tagChannel '(channel))
+			(setq tagChannel `(channel (title ,zeblog-publish-rss-title)))
 			(mapcar (lambda (post)
 				  (let  ((tagTitle post)
 					 (tagLink (format "%s/%s"  zeblog-publish-url (concat post zeblog-publish-file-suffix)))
