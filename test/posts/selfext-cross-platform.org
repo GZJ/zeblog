@@ -1,0 +1,62 @@
+﻿#+TITLE: selfext跨平台构建自解压
+#+OPTIONS: ^:nil
+
+* 朋友的需求
+写这个[[https://github.com/GZJ/selfext][selfext]]的起因是朋友一个需求。他希望把自己苹果笔记本上的文件构建成一个压缩包，然后在公司电脑里打开。但是因为公司电脑有域的限制不能随意安装软件，所以他问问我这种有什么解决方法。
+
+针对这种场景，我想起以前玩过一个叫singlefile的谷歌插件。它是可以把整个网页的html、css、js都下载到一个html文件里的工具，在它的文档[[https://gildas-lormeau.github.io/singlefile-updates/version-1-22.html][页面]]里我第一次接触到一种叫[[https://en.wikipedia.org/wiki/Self-extracting_archive][sfx]](*self-extracting archive*)的文件格式。它本质是一种可执行文件，只要双击点击运行就可以把文件解压出来，不再需要安装三方解压软件。其实这类文件格式在使用pc的过程中碰到过很多，那些msi的安装包不就是一种自解压文件吗？
+
+* golang emebd和跨平台
+想着可以通过构建一个自解压文件来解决朋友的问题，就去谷歌了一圈被我找到一个叫[[https://github.com/megastep/makeself][makeself]]的项目。但这项目是用纯shell脚本写，我那朋友也不是搞软件的，哪里能搞得定这种东西。而且他的需求是从macos构建然后在win中打开这种跨平台的方式，makeself也不支持这种，这就有点麻烦了。
+
+就在我没什么头绪的时候，我看着 *cross platorm* 还有 *single file* 这几个词，突然想起这不是golang本身以及它编译的程序擅长的吗。
+
+而且golang有一个叫 *emebed* 的功能，可以把任意资源文件嵌入进二进制里。我只要写一个解压函数代码，然后再把压缩包路径embed到代码中，然后再用go一起交叉编译就ok了。这样想想代码量不大，完全可以自己写一个工具。
+
+一开始我为了方便起见，想要用golang本身自带的压缩库来构建，但后来在github上发现了一个叫[[https://github.com/mholt/archiver][moholt/archiver]]的项目，它可以只输入压缩文件名以及后缀，就可以自动选择不同的函数，非常方便地解压和解包多种类型的压缩和打包文件。
+
+这样一来代码就更简单了，我只需要引入这个三方库，仅仅几行代码就可以实现针对多种压缩格式的解压功能了。
+
+wrapper.go
+#+begin_src
+        import "github.com/mholt/archiver/v3"
+
+  	err = archiver.Unarchive(filepath.Join(tmpDir, "x.zip"), "x")
+	if err != nil {
+		log.Fatal(err)
+	}
+#+end_src
+
+只要一个包装器代码wrapper.go 然后把它和要解压的目标x.zip嵌入到二进制里，用交叉编译到一起可以了。
+#+begin_src
+env GOOS=darwin GOARCH=arm64 go build wrapper.go
+#+end_src
+
+不过这程序给其它用户用不能只给人代码，让他自己去下载golang sdk然后自己去编译。这对于非开发者来说太困难了，所以还需要再封装一层。
+
+我的办法是 *把go的整个sdk都embed到selfext的二进制包里去* ，然后在首次运行的时候把sdk释放到UserConfig的目录中（相当于在系统中装了一个golang环境），这样就帮用户把golang安装好了。
+
+同时我也会把wrapper.go还有依赖项moholt/archive也一并打包在selfext二进制里。后续使用的时候就把wrapper.go和依赖以及要解压的压缩文件也一并复制到一个临时目录中，再用selfext去调用已经安装好的golang，编译出一个目标平台的二进制文件，最后把临时目录删除就可以了。
+
+整个selfext在普通用户那里使用上就表现得像是一个绿色软件，不用安装也不会有残留的文件，就生成了一个自解压的文件。
+
+* seflext使用
+#+begin_src
+selfext example.zip
+selfext --archive example.zip --os darwin --arch arm64
+#+end_src
+
+这个应用例子会把example.zip默认编译成当前平台的二进制文件example.zip.exe，或者可以通过参数控制指定的系统和架构编译到对应的平台。每个平台构建的可执行文件后面都会带上一个exe的后缀，然后解压之后会解压到example这样去除后缀的目录中，这样一整套就是一个方便的自解压文件构建以及运行流程。
+
+*注意* ：使用的时候，杀毒软件要允许生成的exe文件可以执行，它不像msi这种有签名的软件包，倒是和病毒的工作原理有点类似，所以很容易被识别成恶意软件。而且使用这个软件的过程中，发给别人或者从别人那里接收到exe都不要随意运行，防止跑了别人的恶意程序造成安全事故。
+
+* selfextg
+#+begin_center
+#+ATTR_HTML: :width 100%
+[[file:c:/Users/g/OneDrive/0code/0blog/posts/selfext跨平台构建自解压.files/selfextg.png]]
+#+end_center
+
+一个对selfext包装的简易图形界面工具，拖拽文件之后选择指定的os和arch就可以生成自解压文件。
+
+* 最后
+帮完朋友后，我发现这一套流程可以写成一个工具。所以就给它取名叫[[https://github.com/GZJ/selfext][selfext]]，然后放到github开源了。github上的版本添加了一些代码生成，以及用makefile来构建不同平台的二进制文件等功能，但整体的使用思路上和这文章里的思路是一致的。

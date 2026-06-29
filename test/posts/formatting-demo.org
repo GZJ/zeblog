@@ -1,0 +1,71 @@
+#+TITLE: Org Mode Formatting Demo
+
+This post demonstrates various Org Mode formatting features supported by zeblog for testing purposes.
+
+* Headings
+
+This is a level 1 heading.
+
+** Level 2 Heading
+
+This is nested content under a second-level heading.
+
+*** Level 3 Heading
+
+Even deeper nesting with a third-level heading.
+
+* Text Formatting
+
+You can use *bold*, /italic/, _underline_, +strikethrough+, ~code~, and =verbatim= text styles.
+
+* Lists
+
+Ordered list:
+1. First item
+2. Second item
+3. Third item
+
+Unordered list:
+- Apples
+- Oranges
+- Bananas
+
+Description list:
+- zeblog :: A minimalist blog system based on Org Mode
+- org-mode :: A powerful markup language and organizing system
+
+* Code Blocks
+
+Here is some Elisp code:
+
+#+BEGIN_SRC elisp
+(defun hello-world ()
+  "Say hello to the world."
+  (interactive)
+  (message "Hello, World!"))
+#+END_SRC
+
+And a shell command:
+
+#+BEGIN_SRC sh
+echo "Hello from zeblog!"
+#+END_SRC
+
+* Links
+
+Visit the [[https://github.com/GZJ/zeblog][zeblog GitHub repo]] for more information.
+
+* Quotes
+
+#+BEGIN_QUOTE
+Simplicity is the ultimate sophistication.
+— Leonardo da Vinci
+#+END_QUOTE
+
+* Horizontal Rule
+
+Above the rule.
+
+-----
+
+Below the rule.

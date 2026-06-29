@@ -1,0 +1,5 @@
+#+TITLE: Hello World
+
+Welcome to the zeblog test blog! This is a simple test post to verify that the blog publishing pipeline works correctly.
+
+Zeblog is a minimalist blog system built on Emacs Org Mode. It allows you to write posts in Org format and publish them as static HTML with RSS support.

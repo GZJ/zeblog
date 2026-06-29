@@ -1,0 +1,50 @@
+#+TITLE: Quick Start Guide
+
+This guide explains how to use zeblog to manage your blog posts.
+
+* Prerequisites
+
+Make sure you have the following Emacs packages installed:
+
+- =org-mode= (built-in)
+- =ox-rss= (for RSS feed generation)
+- =xmlgen= (for XML generation)
+- =ImageMagick= (for image pasting support)
+
+* Initialization
+
+#+BEGIN_SRC elisp
+(require 'zeblog)
+(zeblog-init "./my-blog")
+#+END_SRC
+
+You will be prompted to enter author name, email, publish URL, and RSS title.
+
+* Key Bindings
+
+| Key         | Action                       |
+|-------------+------------------------------|
+| =i=         | Create post after current    |
+| =I=         | Create post before current   |
+| =c=         | Create and edit after        |
+| =C=         | Create and edit before       |
+| =d=         | Delete current post          |
+| =r=         | Rename current post          |
+| =Enter=     | Open post in other window    |
+| =S-Enter=   | Open current post            |
+| =n= / =j=   | Move to next post            |
+| =p= / =k=   | Move to previous post        |
+| =m=         | Mark post for publishing     |
+| =M=         | Unmark post                  |
+| =P=         | Publish all marked posts     |
+| =b=         | Browse current post          |
+| =B=         | Browse index page            |
+
+* Workflow
+
+1. Create posts with =i= or =I=
+2. Edit posts by pressing =Enter=
+3. Mark posts for publishing with =m=
+4. Publish all marked posts with =P=
+
+After publishing, the generated HTML files and RSS feed will be in the =public_html/= directory.
