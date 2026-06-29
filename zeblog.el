@@ -701,11 +701,8 @@
 	       )
 	 )
 	)
-  (let ((org-publish-use-timestamps-flag nil)
-	(org-publish-use-timestamps nil))
-    (org-publish "zeblog-posts")
+  (org-publish "zeblog-posts")
     (zeblog-generate-rss)
-    )
   (setq zeblog-published-files zeblog-publish-include-files)
   )
 
