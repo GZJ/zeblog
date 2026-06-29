@@ -72,7 +72,7 @@ Write and publish posts:
 The repository includes a =test/= directory with sample posts. Try without any other config:
 
 #+begin_src sh
-emacs -q --eval '(progn (package-activate (quote xmlgen)) (add-to-list (quote load-path) default-directory) (require (quote zeblog)) (zeblog-init "./test"))'
+emacs -q --eval '(progn (add-to-list (quote load-path) (car (directory-files (concat user-emacs-directory "elpa/") t "xmlgen-"))) (add-to-list (quote load-path) default-directory) (require (quote zeblog)) (zeblog-init "./test"))'
 #+end_src
 
 Press =P= to publish, then =B= to browse.
