@@ -66,3 +66,13 @@ Write and publish posts:
 - M: Unmark current post.
 - P: Publish all posts.
 - b: Browse current post.
+
+* Testing
+
+The repository includes a =test/= directory with sample posts. To try zeblog:
+
+#+begin_src elisp
+(zeblog-init (expand-file-name "test" (file-name-directory (locate-library "zeblog"))))
+#+end_src
+
+Then press =B= to browse the published index.
