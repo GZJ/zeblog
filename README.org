@@ -69,10 +69,12 @@ Write and publish posts:
 
 * Testing
 
-The repository includes a =test/= directory with sample posts. To try zeblog:
+The repository includes a =test/= directory with sample posts. Try without any other config:
 
-#+begin_src elisp
-(zeblog-init (expand-file-name "test" (file-name-directory (locate-library "zeblog"))))
+#+begin_src sh
+emacs -q --eval "(add-to-list 'load-path default-directory)" \
+      --eval "(require 'zeblog)" \
+      --eval "(zeblog-init \"./test\")"
 #+end_src
 
-Then press =B= to browse the published index.
+Press =P= to publish, then =B= to browse.
